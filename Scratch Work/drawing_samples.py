@@ -31,15 +31,20 @@ arcade.draw_ellipse_outline(300,500,100,1,arcade.csscolor.DARK_GREY,1,15)
 x_start = 300
 y_start = 200
 size = 30
+
 #stem
-arcade.draw_rectangle_filled(x_start,y_start - 75,5,150,arcade.csscolor.SIENNA)
+arcade.draw_rectangle_filled(x_start, y_start - 75, 5, 150, arcade.csscolor.SIENNA)
+
 # flower center
-arcade.draw_circle_filled(x_start, y_start, size , arcade.csscolor.BLACK)
-# petals
+arcade.draw_circle_filled(x_start, y_start, size, arcade.csscolor.BLACK)
+
+# petals - trig functions are in radians
 for i in range(0, 360, 20):
-    arcade.draw_ellipse_filled(x_start + math.cos(math.radians(i)) * size, y_start + math.sin(math.radians(i)) * size, 40, 10, arcade.csscolor.YELLOW,-i)
+    arcade.draw_ellipse_filled(x_start + math.cos(math.radians(i)) * size, y_start + math.sin(math.radians(i)) * size,
+                               40, 10, arcade.csscolor.YELLOW, -i)
 
-
+# Remember last thing drawn is "in front"
+# Note PEP-8 flags
 
 
 # Tree trunk
