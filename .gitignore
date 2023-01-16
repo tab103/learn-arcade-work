@@ -1,5 +1,6 @@
 .idea/
 venv/
+venv11/
 *.pyc
 Thumbs.db
 *._*
