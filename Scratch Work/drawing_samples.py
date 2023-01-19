@@ -6,12 +6,25 @@ language and the Arcade library.
 # Import the "arcade" library
 import arcade
 import math
+import random
+
+WIDTH = 600
+HEIGHT = 600
+
+# def draw_flower(x, y, flower_size):
+#     # flower center
+#     arcade.draw_circle_filled(x, y, flower_size / 1.5, arcade.csscolor.BLACK)
+#     # petals - trig functions are in radians
+#     for j in range(0, 360, 20):
+#         arcade.draw_ellipse_filled(x + math.cos(math.radians(j)) * flower_size,
+#                                    y + math.sin(math.radians(j)) * flower_size,
+#                                    flower_size, flower_size / 3, arcade.csscolor.YELLOW, -j)
 
 # Open up a window.
 # From the "arcade" library, use a function called "open_window"
 # Set the window title to "Drawing Example"
 # Set the dimensions (width and height)
-arcade.open_window(600, 600, "Drawing Example")
+arcade.open_window(WIDTH, HEIGHT, "Drawing Example")
 
 # Set the background color
 arcade.set_background_color(arcade.csscolor.SKY_BLUE)
@@ -24,16 +37,22 @@ arcade.start_render()
 # Top of 300, bottom of 0
 arcade.draw_lrtb_rectangle_filled(0, 599, 300, 0, arcade.csscolor.GREEN)
 
-arcade.draw_arc_filled(300,505,25,25,arcade.csscolor.RED,-15,165)
-arcade.draw_ellipse_filled(300,500,100,20,arcade.csscolor.WHITE_SMOKE,15)
-arcade.draw_ellipse_outline(300,500,100,1,arcade.csscolor.DARK_GREY,1,15)
+arcade.draw_arc_filled(300, 505, 25, 25, arcade.csscolor.RED, -15, 165)
+arcade.draw_ellipse_filled(300, 500, 100, 20, arcade.csscolor.WHITE_SMOKE, 15)
+arcade.draw_ellipse_outline(300, 500, 100, 1, arcade.csscolor.DARK_GREY, 1, 15)
 
 x_start = 300
 y_start = 200
 size = 30
 
-#stem
+# for j in range(50):
+#     size = random.randint(10,30)
+#     x_start = random.randint(50, WIDTH)
+#     y_start = random.randint(50, HEIGHT)
+#     draw_flower(x_start, y_start, size)
+
 arcade.draw_rectangle_filled(x_start, y_start - 75, 5, 150, arcade.csscolor.SIENNA)
+# stem
 
 # flower center
 arcade.draw_circle_filled(x_start, y_start, size, arcade.csscolor.BLACK)
@@ -45,7 +64,6 @@ for i in range(0, 360, 20):
 
 # Remember last thing drawn is "in front"
 # Note PEP-8 flags
-
 
 # Tree trunk
 arcade.draw_rectangle_filled(100, 320, 20, 60, arcade.csscolor.SIENNA)
