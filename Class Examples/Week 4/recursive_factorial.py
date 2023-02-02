@@ -5,4 +5,4 @@ def factorial(a):
     else:
         return a * factorial(a - 1) # recursive call
 
-print(factorial(6))
+print(factorial(5))

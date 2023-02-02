@@ -2,7 +2,7 @@ import arcade
 import random
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
-SCALE = 0.4
+SCALE = 0.8
 
 def draw_grass():
     """ Draw the ground """
@@ -57,7 +57,7 @@ def on_draw(delta_time):
 
 
 # create on_draw function attributes
-on_draw.ball_texture = arcade.load_texture("beach-ball.png")
+on_draw.ball_texture = arcade.load_texture("shark.png")
 on_draw.x = random.randint(0,700)
 on_draw.y = random.randint(0,700)
 on_draw.x_increment = random.randint(-5,5)
