@@ -1,5 +1,4 @@
 """An approximation of using Newton's Second Law to simulate projectile motion"""
-"""test revert"""
 import arcade
 import sys
 import math
