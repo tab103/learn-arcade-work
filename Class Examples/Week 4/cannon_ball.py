@@ -45,19 +45,22 @@ on_draw.xforce = on_draw.force * math.cos(math.radians(on_draw.angle))
 on_draw.yforce = on_draw.force * math.sin(math.radians(on_draw.angle))
 on_draw.time = 0
 
-def main(args):
+def init_window():
+    arcade.open_window(SCREEN_WIDTH, SCREEN_HEIGHT, "Drawing with Functions")
+    arcade.set_background_color(arcade.color.LIGHT_BLUE)
+    # Call on_draw every 60th of a second.
+    arcade.schedule(on_draw, 1 / 60)
+    arcade.run()
+
+def main():
     while True:
         on_draw.angle = float(input("Enter firing angle: "))
         on_draw.force = float(input("Enter firing force: "))
         on_draw.xforce = on_draw.force * math.cos(math.radians(on_draw.angle))
         on_draw.yforce = on_draw.force * math.sin(math.radians(on_draw.angle))
         on_draw.inflight = True
+        init_window()
 
-        arcade.open_window(SCREEN_WIDTH, SCREEN_HEIGHT, "Drawing with Functions")
-        arcade.set_background_color(arcade.color.LIGHT_BLUE)
-        # Call on_draw every 60th of a second.
-        arcade.schedule(on_draw, 1/60)
-        arcade.run()
 
 # Call the main function to get the program started.
-main(sys.argv[1:])
+main()
