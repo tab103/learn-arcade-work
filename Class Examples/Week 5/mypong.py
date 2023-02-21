@@ -37,8 +37,8 @@ def sgn(x):
 
 def place_ball():
     global ball_x, ball_y, ball_dx, ball_dy, rotation_dr
-    ball_x = random.randint(0, 700)
-    ball_y = random.randint(0, 700)
+    ball_x = random.randint(100, 700)
+    ball_y = random.randint(100, 700)
     ball_dx = random.randint(-10, 10)
     ball_dy = random.randint(-8, 8)
     rotation_dr = random.randint(5, 10)
