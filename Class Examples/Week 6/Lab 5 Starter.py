@@ -62,6 +62,7 @@ def draw_section_8():
     pass
 
 
+
 def main():
     # Create a window
     arcade.open_window(1200, 600, "Lab 05 - Loopy Lab")
