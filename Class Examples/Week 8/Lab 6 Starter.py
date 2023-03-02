@@ -25,6 +25,8 @@ def main():
         if direction[0] == 'n':
             next_room = room_list[current_room].north
 
+        if direction[0] == 's':
+            next_room = room_list[current_room].south
         # add other directions
 
         else:
