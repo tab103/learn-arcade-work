@@ -21,6 +21,19 @@ SCREEN_TITLE = "Better Move Sprite with Keyboard Example"
 
 MOVEMENT_SPEED = 5
 
+class Ball:
+    def __init__(self, size):
+        self.size = 10
+
+b = Ball(10)
+c = Ball(20)
+
+
+c.size
+b.size = 5
+print(b.size)
+
+
 
 class Player(arcade.Sprite):
 

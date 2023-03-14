@@ -1,124 +1,144 @@
 """
-This is a sample program to show how to draw using the Python programming
-language and the Arcade library.
+This simple animation example shows how to use classes to animate
+multiple objects on the screen at the same time.
+
+Note: Sprites draw much faster than drawing primitives
+
+If Python and Arcade are installed, this example can be run from the command line with:
+python -m arcade.examples.shapes
 """
 
-# Import the "arcade" library
 import arcade
-import math
 import random
 
-WIDTH = 600
-HEIGHT = 600
+# Set up the constants
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
+SCREEN_TITLE = "Shapes!"
 
-def draw_flower(x, y, flower_size):
-    # flower center
-    arcade.draw_circle_filled(x, y, flower_size / 1.5, arcade.csscolor.BLACK)
-    # petals - trig functions are in radians
-    for j in range(0, 360, 20):
-        arcade.draw_ellipse_filled(x + math.cos(math.radians(j)) * flower_size,
-                                   y + math.sin(math.radians(j)) * flower_size,
-                                   flower_size, flower_size / 3, arcade.csscolor.YELLOW, -j)
+NUMBER_OF_SHAPES = 500
 
-# Open up a window.
-# From the "arcade" library, use a function called "open_window"
-# Set the window title to "Drawing Example"
-# Set the dimensions (width and height)
-arcade.open_window(WIDTH, HEIGHT, "Drawing Example")
 
-# Set the background color
-arcade.set_background_color(arcade.csscolor.SKY_BLUE)
+class Shape:
+    """ Generic base shape class """
+    def __init__(self, x, y, width, height, angle, delta_x, delta_y,
+                 delta_angle, color):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.angle = angle
+        self.delta_x = delta_x
+        self.delta_y = delta_y
+        self.delta_angle = delta_angle
+        self.color = color
 
-# Get ready to draw
-arcade.start_render()
+    def move(self):
+        self.x += self.delta_x
+        self.y += self.delta_y
+        self.angle += self.delta_angle
+        if self.x < 0 and self.delta_x < 0:
+            self.delta_x *= -1
+        if self.y < 0 and self.delta_y < 0:
+            self.delta_y *= -1
+        if self.x > SCREEN_WIDTH and self.delta_x > 0:
+            self.delta_x *= -1
+        if self.y > SCREEN_HEIGHT and self.delta_y > 0:
+            self.delta_y *= -1
 
-# Draw a rectangle
-# Left of 0, right of 599
-# Top of 300, bottom of 0
-arcade.draw_lrtb_rectangle_filled(0, 599, 300, 0, arcade.csscolor.GREEN)
 
-arcade.draw_arc_filled(300, 505, 25, 25, arcade.csscolor.RED, -15, 165)
-arcade.draw_ellipse_filled(300, 500, 100, 20, arcade.csscolor.WHITE_SMOKE, 15)
-arcade.draw_ellipse_outline(300, 500, 100, 1, arcade.csscolor.DARK_GREY, 1, 15)
+class Ellipse(Shape):
 
-x_start = 300
-y_start = 200
-size = 30
+    def draw(self):
+        arcade.draw_ellipse_filled(self.x, self.y, self.width, self.height,
+                                   self.color, self.angle)
 
-for j in range(50):
-    size = random.randint(10,30)
-    x_start = random.randint(50, WIDTH)
-    y_start = random.randint(50, HEIGHT)
-    draw_flower(x_start, y_start, size)
 
-# arcade.draw_rectangle_filled(x_start, y_start - 75, 5, 150, arcade.csscolor.SIENNA)
-# stem
+class Rectangle(Shape):
 
-# flower center
-#arcade.draw_circle_filled(x_start, y_start, size, arcade.csscolor.BLACK)
+    def draw(self):
+        arcade.draw_rectangle_filled(self.x, self.y, self.width, self.height,
+                                     self.color, self.angle)
 
-# petals - trig functions are in radians
-#for i in range(0, 360, 20):
-#    arcade.draw_ellipse_filled(x_start + math.cos(math.radians(i)) * size, y_start + math.sin(math.radians(i)) * size,
-#                               40, 10, arcade.csscolor.YELLOW, -i)
 
-# Remember last thing drawn is "in front"
-# Note PEP-8 flags
+class Line(Shape):
 
-# Tree trunk
-arcade.draw_rectangle_filled(100, 320, 20, 60, arcade.csscolor.SIENNA)
+    def draw(self):
+        arcade.draw_line(self.x, self.y,
+                         self.x + self.width, self.y + self.height,
+                         self.color, 2)
 
-# Tree top
-arcade.draw_circle_filled(100, 350, 30, arcade.csscolor.DARK_GREEN)
 
-# Another tree, with a trunk and ellipse for top
-arcade.draw_rectangle_filled(200, 320, 20, 60, arcade.csscolor.SIENNA)
-arcade.draw_ellipse_filled(200, 370, 60, 80, arcade.csscolor.DARK_GREEN)
+class MyGame(arcade.Window):
+    """ Main application class. """
 
-# Another tree, with a trunk and arc for top
-# Arc is centered at (300, 340) with a width of 60 and height of 100.
-# The starting angle is 0, and ending angle is 180.
-arcade.draw_rectangle_filled(300, 320, 20, 60, arcade.csscolor.SIENNA)
-arcade.draw_arc_filled(300, 340, 60, 100, arcade.csscolor.DARK_GREEN, 0, 180)
+    def __init__(self):
+        # Call the parent __init__
+        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
 
-# Another tree, with a trunk and triangle for top
-# Triangle is made of these three points:
-# (400, 400), (370, 320), (430, 320)
-arcade.draw_rectangle_filled(400, 320, 20, 60, arcade.csscolor.SIENNA)
-arcade.draw_triangle_filled(400, 400, 370, 320, 430, 320, arcade.csscolor.DARK_GREEN)
+        # Create a shape list
+        self.shape_list = []
 
-# Draw a tree using a polygon with a list of points
-arcade.draw_rectangle_filled(500, 320, 20, 60, arcade.csscolor.SIENNA)
-arcade.draw_polygon_filled(((500, 400),
-                            (480, 360),
-                            (470, 320),
-                            (530, 320),
-                            (520, 360)
-                            ),
-                           arcade.csscolor.DARK_GREEN)
+        for i in range(NUMBER_OF_SHAPES):
 
-# Draw a sun
-arcade.draw_circle_filled(500, 550, 40, arcade.color.YELLOW)
+            # Random spot
+            x = random.randrange(0, SCREEN_WIDTH)
+            y = random.randrange(0, SCREEN_HEIGHT)
 
-# Rays to the left, right, up, and down
-arcade.draw_line(500, 550, 400, 550, arcade.color.YELLOW, 3)
-arcade.draw_line(500, 550, 600, 550, arcade.color.YELLOW, 3)
-arcade.draw_line(500, 550, 500, 450, arcade.color.YELLOW, 3)
-arcade.draw_line(500, 550, 500, 650, arcade.color.YELLOW, 3)
+            # Random size
+            width = random.randrange(15, 40)
+            height = random.randrange(15, 40)
 
-# Diagonal rays
-arcade.draw_line(500, 550, 550, 600, arcade.color.YELLOW, 3)
-arcade.draw_line(500, 550, 550, 500, arcade.color.YELLOW, 3)
-arcade.draw_line(500, 550, 450, 600, arcade.color.YELLOW, 3)
-arcade.draw_line(500, 550, 450, 500, arcade.color.YELLOW, 3)
+            # Random angle
+            angle = random.randrange(0, 360)
 
-# Draw text at (150, 230) with a font size of 24 pts.
-arcade.draw_text("Arbor Day - Plant a Tree!",
-                 150, 450,
-                 arcade.color.BLACK, 24)
+            # Random movement
+            d_x = random.randrange(-3, 4)
+            d_y = random.randrange(-3, 4)
+            d_angle = random.randrange(-3, 4)
 
-# Finish drawing
-arcade.finish_render()
+            # Random color
+            red = random.randrange(256)
+            green = random.randrange(256)
+            blue = random.randrange(256)
+            alpha = random.randrange(256)
 
-# Keep the window up until someone closes it.
-arcade.run()
+            # Random line, ellipse, or rect
+            shape_type = random.randrange(3)
+
+            if shape_type == 0:
+                shape = Rectangle(x, y, width, height, angle, d_x, d_y,
+                                  d_angle, (red, green, blue, alpha))
+            elif shape_type == 1:
+                shape = Ellipse(x, y, width, height, angle, d_x, d_y,
+                                d_angle, (red, green, blue, alpha))
+            else:
+                shape = Line(x, y, width, height, angle, d_x, d_y,
+                             d_angle, (red, green, blue, alpha))
+
+            # Add this new shape to the list
+            self.shape_list.append(shape)
+
+    def on_update(self, dt):
+        """ Move everything """
+        for shape in self.shape_list:
+            shape.move()
+
+    def on_draw(self):
+        """ Render the screen. """
+
+        # Clear teh screen
+        self.clear()
+
+        # Draw the shapes
+        for shape in self.shape_list:
+            shape.draw()
+
+
+def main():
+    win = MyGame()
+    win.run()
+
+
+if __name__ == "__main__":
+    main()
