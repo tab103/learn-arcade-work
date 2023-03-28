@@ -18,6 +18,9 @@ def main():
     room_list.append(room)
 
     # add rest of the rooms
+    # Bedroom 2 - 0 - (description, north, east, south, west)
+    room = Room("You are in the kitchen, there is a door to the west.", None, None, None, 0)
+    room_list.append(room)
 
     while not done:
         print(room_list[current_room].description)
@@ -25,8 +28,16 @@ def main():
         if direction[0] == 'n':
             next_room = room_list[current_room].north
 
-        if direction[0] == 's':
+        elif direction[0] == 's':
             next_room = room_list[current_room].south
+        # add other directions
+
+        elif direction[0] == 'e':
+            next_room = room_list[current_room].east
+        # add other directions
+
+        elif direction[0] == 'w':
+            next_room = room_list[current_room].west
         # add other directions
 
         else:
