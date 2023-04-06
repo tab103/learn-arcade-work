@@ -1,5 +1,42 @@
 
-def sort_the_list(name_list):
+def binary_search(key, name_list, reverse=False):
+    # --- Binary search
+
+
+    lower_bound = 0
+    upper_bound = len(name_list)-1
+    found = False
+
+    # Loop until we find the item, or our upper/lower bounds meet
+    condition = lower_bound <= upper_bound and not found
+    if reverse:
+        condition = lower_bound >= upper_bound and not found
+
+    while condition:
+        # Find the middle position
+        middle_pos = (lower_bound + upper_bound) // 2
+
+        # Figure out if we:
+        # move up the lower bound, or
+        # move down the upper bound, or
+        # we found what we are looking for
+        if name_list[middle_pos] < key:
+            lower_bound = middle_pos + 1
+        elif name_list[middle_pos] > key:
+            upper_bound = middle_pos - 1
+        else:
+            found = True
+
+        condition = lower_bound <= upper_bound and not found
+        if reverse:
+            condition = lower_bound >= upper_bound and not found
+
+    if found:
+        print( "The name is at position", middle_pos)
+    else:
+        print( "The name was not in the list." )
+
+def reverse_sort_the_list(name_list):
     reverse_list = name_list.copy()
     reverse_list.sort(reverse=True)
     return reverse_list
@@ -104,9 +141,10 @@ def main():
     a_better_close()
     villains = read_into_list()
     linear_search("Astarte Hellebore", villains)
-    reverse_villains = sort_the_list(villains)
+    reverse_villains = reverse_sort_the_list(villains)
     #print(reverse_villains)
     linear_search("Astarte Hellebore", reverse_villains)
-
+    binary_search("Astarte Hellebore", reverse_villains, reverse=True)
+    binary_search("Astarte Hellebore", villains)
 
 main()
