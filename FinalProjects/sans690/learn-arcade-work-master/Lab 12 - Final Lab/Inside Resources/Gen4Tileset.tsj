@@ -1,0 +1,14 @@
+{ "columns":16,
+ "image":"Gen4.png",
+ "imageheight":17056,
+ "imagewidth":256,
+ "margin":0,
+ "name":"Gen4Tileset",
+ "spacing":0,
+ "tilecount":17056,
+ "tiledversion":"1.10.0",
+ "tileheight":16,
+ "tilewidth":16,
+ "type":"tileset",
+ "version":"1.10"
+}

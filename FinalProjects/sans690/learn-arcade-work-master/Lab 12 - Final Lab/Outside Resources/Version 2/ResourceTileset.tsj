@@ -1,0 +1,14 @@
+{ "columns":16,
+ "image":"OutsideInsideGen4Resource.png",
+ "imageheight":18976,
+ "imagewidth":256,
+ "margin":0,
+ "name":"Outside\/InsideGen4ResourceTileset",
+ "spacing":0,
+ "tilecount":18976,
+ "tiledversion":"1.10.0",
+ "tileheight":16,
+ "tilewidth":16,
+ "type":"tileset",
+ "version":"1.10"
+}
