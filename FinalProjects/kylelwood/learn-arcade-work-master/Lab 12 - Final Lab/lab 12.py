@@ -36,10 +36,10 @@ class Bullet(arcade.Sprite):
     def update(self):
         self.center_x += self.x_delta
         self.center_y += self.y_delta
-        self.life_x += self.x_delta
-        self.life_y += self.y_delta
+        self.life_x += abs(self.x_delta)
+        self.life_y += abs(self.y_delta)
 
-        # limit bullet life
+        # limit bullet life (not optimal but should be fine)
         if self.life_x > SCREEN_WIDTH or self.life_y > SCREEN_HEIGHT:
             self.remove_from_sprite_lists() # if off screen remove
 
@@ -96,6 +96,7 @@ class MyGame(arcade.Window):
         self.ammo_crate_list = None
         self.bullet_list = None
         self.health_kit_list = None
+
 
         # player
         self.player_sprite = Player()
@@ -273,7 +274,7 @@ class MyGame(arcade.Window):
         self.ammo_crate_list.draw()
         self.health_kit_list.draw()
         self.bullet_list.draw()
-        #self.zombie_list.draw()
+        self.zombie_list.draw()
 
         # Select the camera for GUI
         self.camera_gui.use()
@@ -325,21 +326,18 @@ class MyGame(arcade.Window):
             self.RIGHT_pressed = False
 
     def on_mouse_press(self, x, y, button, modifiers):
-        print(x % SCREEN_WIDTH, self.player_sprite.center_x % SCREEN_WIDTH - self.view_left, y % SCREEN_HEIGHT, self.player_sprite.center_y % SCREEN_HEIGHT - self.view_bottom)
         if self.ammo > 0:
-            y_delta = y - self.player_sprite.center_y
-            x_delta = x - self.player_sprite.center_x
+            pos = self.camera_sprites.position
+            game_x = pos.x + x
+            game_y = pos.y + y
+            y_delta = game_y - self.player_sprite.center_y
+            x_delta = game_x - self.player_sprite.center_x
             angle = math.atan2(y_delta, x_delta)
-            # tan gives first two quadrants, compensate for 3 and 4
-            # if rise < 0 and run < 0:
-            #     angle = angle + 180
-            # elif rise < 0 and run > 0:
-            #     angle = angle - 90
             bullet = Bullet("laserRed01.png", SPRITE_SCALING_LASER)
             bullet.angle = math.degrees(angle)
             bullet.x_delta = BULLET_SPEED * math.cos(angle)
             bullet.y_delta = BULLET_SPEED * math.sin(angle)
-            bullet.angle = angle - 90
+            bullet.angle = math.degrees(angle) - 90
             bullet.center_x = self.player_sprite.center_x
             bullet.center_y = self.player_sprite.center_y
             self.bullet_list.append(bullet)
@@ -356,8 +354,8 @@ class MyGame(arcade.Window):
         self.player_list.update()
         #self.bullet_list.update()
 
-        #if self.health <= 0:
-        #    arcade.exit()
+        if self.health <= 0:
+            arcade.exit()
 
         # Calculate speed
         self.player_sprite.change_x = 0
@@ -371,39 +369,7 @@ class MyGame(arcade.Window):
             self.player_sprite.change_x = -PLAYER_MOVEMENT_SPEED
         elif self.d_pressed and not self.a_pressed:
             self.player_sprite.change_x = PLAYER_MOVEMENT_SPEED
-        # if self.UP_pressed and not self.DOWN_pressed and self.ammo >= 1:
-        #     bullet = arcade.Sprite("laserRed01.png", SPRITE_SCALING_LASER)
-        #     bullet.angle = 0
-        #     bullet.change_y = BULLET_SPEED
-        #     bullet.center_x = self.player_sprite.center_x
-        #     #bullet.top = self.player_sprite.top
-        #     bullet.center_y = self.player_sprite.center_y
-        #     self.bullet_list.append(bullet)
-        #     self.ammo -= 1
-        # elif self.DOWN_pressed and not self.UP_pressed and self.ammo >= 1:
-        #     bullet = arcade.Sprite("laserRed01.png", SPRITE_SCALING_LASER)
-        #     bullet.angle = 180
-        #     bullet.change_y = -BULLET_SPEED
-        #     bullet.center_x = self.player_sprite.center_x
-        #     #bullet.top = self.player_sprite.top
-        #     self.bullet_list.append(bullet)
-        #     self.ammo -= 1
-        # if self.LEFT_pressed and not self.RIGHT_pressed and self.ammo >= 1:
-        #     bullet = arcade.Sprite("laserRed01.png", SPRITE_SCALING_LASER)
-        #     bullet.angle = 90
-        #     bullet.change_x = -BULLET_SPEED
-        #     bullet.center_x = self.player_sprite.center_x
-        #     #bullet.top = self.player_sprite.top
-        #     self.bullet_list.append(bullet)
-        #     self.ammo -= 1
-        # elif self.RIGHT_pressed and not self.LEFT_pressed and self.ammo >= 1:
-        #     bullet = arcade.Sprite("laserRed01.png", SPRITE_SCALING_LASER)
-        #     bullet.angle = 270
-        #     bullet.change_x = BULLET_SPEED
-        #     bullet.center_x = self.player_sprite.center_x
-        #     bullet.top = self.player_sprite.top
-        #     self.bullet_list.append(bullet)
-        #     self.ammo -= 1
+
 
         # list of all sprites that collide with the player.
         health_kit_hit_list = arcade.check_for_collision_with_list(self.player_sprite, self.health_kit_list)
@@ -445,9 +411,11 @@ class MyGame(arcade.Window):
             for zombie in hit_list1:
                 zombie.remove_from_sprite_lists()
 
+            #!!! problem is that this doesn't account for scrolling
             # If the bullet flies off-screen, remove it.
-            if bullet.bottom > self.width or bullet.top < 0 or bullet.right < 0 or bullet.left > self.width:
-                bullet.remove_from_sprite_lists()
+            #if bullet.bottom > self.width or bullet.top < 0 or bullet.right < 0 or bullet.left > self.width:
+            #    bullet.remove_from_sprite_lists()
+            #    print('bullet removed')
 
         changed = False
 
@@ -487,14 +455,19 @@ class MyGame(arcade.Window):
         # Scroll the screen
         self.scroll_to_player()
 
+
+
     def scroll_to_player(self):
         position = Vec2(self.player_sprite.center_x - self.width / 2,
                         self.player_sprite.center_y - self.height / 2)
         self.camera_sprites.move_to(position, CAMERA_SPEED)
 
+
     def on_resize(self, width, height):
         self.camera_sprites.resize(int(width), int(height))
         self.camera_gui.resize(int(width), int(height))
+
+
 
 
 def main():

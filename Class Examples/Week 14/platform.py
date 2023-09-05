@@ -1,4 +1,4 @@
-import arcade
+edimport arcade
 
 SPRITE_SCALING = 0.5
 TILE_SCALING = 0.5

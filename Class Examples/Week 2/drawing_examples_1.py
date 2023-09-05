@@ -9,7 +9,9 @@ arcade.start_render()
 # type arcade.draw ... see what tools are in the box
 
 # ugly bus
-arcade.draw_polygon_filled([(25,345),(50,400),(350,400),(375,345)],arcade.color.BLUE)
+for i in range(300):
+    arcade.draw_polygon_filled([(i,i),(50,400),(350,400),(375,345)],arcade.color.APRICOT)
+
 arcade.draw_rectangle_filled(200,320,350,50,arcade.color.GREEN)
 arcade.draw_ellipse_filled(100,300,50,50,arcade.color.BLACK)
 arcade.draw_ellipse_filled(300,300,50,50,arcade.color.BLACK)
