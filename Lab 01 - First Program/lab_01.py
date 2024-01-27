@@ -1,2 +1,5 @@
-print('Hello Big World 123!')
-Hi
+print('Gilgamesh')
+print('Lysistrata')
+print('Tartuffe')
+print("'Hello' said Joe")
+print('That \nis \ncrazy')
