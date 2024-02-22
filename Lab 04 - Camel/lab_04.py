@@ -24,6 +24,7 @@ def main():
     horse_tiredness = 0
     tribe_distance = -20
     beef_jerky = 5
+    daily_travel = 0
 
     done = False
 
@@ -46,8 +47,9 @@ def main():
                 beef_jerky -= 1
 
         elif user_choice == 'B':  # moderate speed
-            miles_traveled += random.randrange(7, 14)
-            print("Miles traveled:", miles_traveled)
+            daily_travel += random.randrange(7, 14)
+            miles_traveled += daily_travel
+            print("Miles traveled:", daily_travel)
             horse_tiredness += 1
             hunger += 1
             if random.randrange(21) == 0:
@@ -56,8 +58,9 @@ def main():
             tribe_distance += random.randrange(7, 12)
 
         elif user_choice == 'C':  # Full speed
-            miles_traveled += random.randrange(10, 22)
-            print("Miles traveled:", miles_traveled)
+            daily_travel += random.randrange(10, 22)
+            miles_traveled += daily_travel
+            print("Miles traveled:", daily_travel)
             hunger += 1
             horse_tiredness += random.randrange(1, 4)
             tribe_distance += random.randrange(7, 14)
@@ -95,6 +98,8 @@ def main():
         if miles_traveled >= 200:
             print("You have won and escaped from the natives!!!")
             done = True
+        if miles_traveled <= 200:
+            daily_travel = 0
 
 
 main()
