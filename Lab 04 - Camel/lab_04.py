@@ -79,7 +79,7 @@ def main():
         if hunger > 4:
             print("You're starved")
 
-        if horse_tiredness > 5 and horse_tiredness < 8:
+        if horse_tiredness > 4 and horse_tiredness < 8:
             print("Your horse is tired")
 
         if horse_tiredness >= 8:
