@@ -160,9 +160,9 @@ def main():
     if insanity > 6 and insanity < 10:
         print("You hear whispers from the walls but can't make out what they are saying.")
     if insanity > 10 and insanity < 18:
-        print("You hear the voices louder but they scream now in panic followed by growling")
+        print("You hear the voices louder but they scream now in panic followed by growling.")
     if insanity > 18 and insanity < 25:
-            print("You hear fervent scratching from the walls as the voices scream louder and louder")
+        print("You hear fervent scratching from the walls as the voices scream louder and louder.")
 
 
 main()
