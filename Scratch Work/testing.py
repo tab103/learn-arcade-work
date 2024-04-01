@@ -1,79 +1,140 @@
+""" Sprite Sample Program """
+
+import random
 import arcade
 
-SCREEN_WIDTH = 640
-SCREEN_HEIGHT = 480
-MOVEMENT_SPEED = 3
+# --- Constants ---
+SPRITE_SCALING_PLAYER = 0.5
+SPRITE_SCALING_COIN = 0.2
+COIN_COUNT = 50
+
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
 
 
-class Ball:
-    def __init__(self, position_x, position_y, change_x, change_y, radius, color):
+class Coin(arcade.Sprite):
 
-        # Take the parameters of the init function above,
-        # and create instance variables out of them.
-        self.position_x = position_x
-        self.position_y = position_y
-        self.change_x = change_x
-        self.change_y = change_y
-        self.radius = radius
-        self.color = color
+    def __init__(self, filename, sprite_scaling):
 
-    def draw(self):
-        """ Draw the balls with the instance variables we have. """
-        arcade.draw_circle_filled(self.position_x,
-                                  self.position_y,
-                                  self.radius,
-                                  self.color)
+        super().__init__(filename, sprite_scaling)
 
-    def update(self):
-        # Move the ball
-        self.position_y += self.change_y
-        self.position_x += self.change_x
+        self.change_x = 0
+        self.change_y = 0
+
+    def on_update(self, delta_time: float = 1 / 60) -> None:
+
+        # Move the coin
+        self.center_x += self.change_x
+        self.center_y += self.change_y
+
+        # If we are out-of-bounds, then 'bounce'
+        if self.left < 0:
+            self.change_x *= -1
+
+        if self.right > SCREEN_WIDTH:
+            self.change_x *= -1
+
+        if self.bottom < 0:
+            self.change_y *= -1
+
+        if self.top > SCREEN_HEIGHT:
+            self.change_y *= -1
 
 
 class MyGame(arcade.Window):
+    """ Our custom Window Class"""
 
-    def __init__(self, width, height, title):
+    def __init__(self):
+        """ Initializer """
+        # Call the parent class initializer
+        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, "Sprite Example")
 
-        # Call the parent class's init function
-        super().__init__(width, height, title)
+        # Variables that will hold sprite lists
+        self.player_list = None
+        self.coin_list = None
 
+        # Set up the player info
+        self.player_sprite = None
+        self.score = 0
+
+        # Don't show the mouse cursor
         self.set_mouse_visible(False)
 
-        arcade.set_background_color(arcade.color.ASH_GREY)
+        arcade.set_background_color(arcade.color.AMAZON)
 
-        # Create our ball
-        self.ball = Ball(50, 50, 0, 0, 15, arcade.color.AUBURN)
+    def setup(self):
+        """ Set up the game and initialize the variables. """
+
+        # Sprite lists
+        self.player_list = arcade.SpriteList()
+        self.coin_list = arcade.SpriteList()
+
+        # Score
+        self.score = 0
+
+        # Set up the player
+        # Character image from kenney.nl
+        self.player_sprite = arcade.Sprite("character.png", SPRITE_SCALING_PLAYER)
+        self.player_sprite.center_x = 50
+        self.player_sprite.center_y = 50
+        self.player_list.append(self.player_sprite)
+
+        # Create the coins
+        for i in range(COIN_COUNT):
+
+            # Create the coin instance
+            # Coin image from kenney.nl
+            coin = Coin("coin_01.png", SPRITE_SCALING_COIN)
+
+            # Position the coin
+            coin.center_x = random.randrange(SCREEN_WIDTH)
+            coin.center_y = random.randrange(SCREEN_HEIGHT)
+            coin.change_x = random.randrange(-3, 4)
+            coin.change_y = random.randrange(-3, 4)
+
+            # Add the coin to the lists
+            self.coin_list.append(coin)
 
     def on_draw(self):
-        """ Called whenever we need to draw the window. """
+        """ Draw everything """
         arcade.start_render()
-        self.ball.draw()
+        self.coin_list.draw()
+        self.player_list.draw()
 
-    def update(self, delta_time):
-        self.ball.update()
+        # Put the text on the screen.
+        output = f"Score: {self.score}"
+        arcade.draw_text(output, 10, 20, arcade.color.WHITE, 14)
 
-    def on_key_press(self, key, modifiers):
-        """ Called whenever the user presses a key. """
-        if key == arcade.key.LEFT:
-            self.ball.change_x = -MOVEMENT_SPEED
-        elif key == arcade.key.RIGHT:
-            self.ball.change_x = MOVEMENT_SPEED
-        elif key == arcade.key.UP:
-            self.ball.change_y = MOVEMENT_SPEED
-        elif key == arcade.key.DOWN:
-            self.ball.change_y = -MOVEMENT_SPEED
+    def on_mouse_motion(self, x, y, dx, dy):
+        """ Handle Mouse Motion """
 
-    def on_key_release(self, key, modifiers):
-        """ Called whenever a user releases a key. """
-        if key == arcade.key.LEFT or key == arcade.key.RIGHT:
-            self.ball.change_x = 0
-        elif key == arcade.key.UP or key == arcade.key.DOWN:
-            self.ball.change_y = 0
+        # Move the center of the player sprite to match the mouse x, y
+        self.player_sprite.center_x = x
+        self.player_sprite.center_y = y
+
+    def on_update(self, delta_time):
+        """ Movement and game logic """
+
+        # Call update on all sprites (The sprites don't do much in this
+        # example though.)
+        self.coin_list.on_update(delta_time)
+
+        # Generate a list of all sprites that collided with the player.
+        hit_list = arcade.check_for_collision_with_list(self.player_sprite,
+                                                        self.coin_list)
+
+        # Loop through each colliding sprite, remove it, and add to the score.
+        for coin in hit_list:
+            coin.remove_from_sprite_lists()
+            self.score += 1
 
 
 def main():
-    window = MyGame(640, 480, "Drawing Example")
+    """ Main method """
+    window = MyGame()
+    window.setup()
     arcade.run()
 
 
-main()
+if __name__ == "__main__":
+    main()
