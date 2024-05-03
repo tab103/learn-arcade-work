@@ -98,9 +98,10 @@ class MyGame(arcade.Window):
                 if self.grid[column][row] == 1:
                     counting_y += 1
                     continuous_count += 1
+                else:
+                    continuous_count = 0
             if continuous_count > 2:
                 print("There are", continuous_count, "cells selected in a row in row", column)
-            continuous_count = 0
             print("There are", counting_y, "cells in row", column)
             counting_y = 0
         for row in range(ROW_COUNT):
