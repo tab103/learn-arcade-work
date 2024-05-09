@@ -8,10 +8,10 @@ GRAVITY = 0.25
 DEFAULT_SCREEN_WIDTH = 800
 DEFAULT_SCREEN_HEIGHT = 600
 SCREEN_TITLE = "Final Lab"
-VIEWPORT_MARGIN = 220
-CAMERA_SPEED = 0.2
-MOVEMENT_SPEED = 7
-JUMP = 10
+VIEWPORT_MARGIN = 50
+CAMERA_SPEED = 0.1
+MOVEMENT_SPEED = 5
+JUMP = 5
 
 
 class MyGame(arcade.Window):
@@ -51,8 +51,8 @@ class MyGame(arcade.Window):
         # Set up the player
         self.player_sprite = arcade.Sprite("FinalLabPlayer.png",
                                            scale=0.5)
-        self.player_sprite.center_x = 256
-        self.player_sprite.center_y = 512
+        self.player_sprite.center_x = 20
+        self.player_sprite.center_y = 20
         self.player_list.append(self.player_sprite)
 
         # --- Load our map
