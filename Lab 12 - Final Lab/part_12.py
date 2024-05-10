@@ -1,8 +1,8 @@
 import arcade
 
-SPRITE_SCALING = 0.5
-TILE_SCALING = 0.5
-GRID_PIXEL_SIZE = 128
+SPRITE_SCALING = 2
+TILE_SCALING = 1
+GRID_PIXEL_SIZE = 18
 GRAVITY = 0.25
 
 DEFAULT_SCREEN_WIDTH = 800
@@ -18,28 +18,24 @@ class MyGame(arcade.Window):
     def __init__(self, width, height, title):
         """ Initializer """
         super().__init__(width, height, title, resizable=True)
-
         # Sprite lists
         self.player_list = None
         self.wall_list = None
-
-        # Set up the player
+        self.score = arcade.load_sound("TownTheme.mp3")  # https://opengameart.org/content/town-theme-rpg
+        self.score_player = None
+        self.walk = arcade.load_sound("sfx_step_grass_l.flac")  # https://opengameart.org/content/grass-foot-step-sou
+        # nds-yo-frankie
+        self.walk_player = None
+        self.jump = arcade.load_sound("SFX_Jump_01.wav")  # https://opengameart.org/content/8-bit-jump-1
+        self.jump_player = None
         self.player_sprite = None
-
-        # Physics engine so we don't run into walls.
         self.physics_engine = None
-
-        # Track the current state of what key is pressed
         self.left_pressed = False
         self.right_pressed = False
-
-        # Store our tile map
         self.tile_map = None
-
-        # Create the cameras. One for the GUI, one for the sprites.
-        # We scroll the 'sprite world' but not the GUI.
         self.camera_sprites = arcade.Camera(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT)
         self.camera_gui = arcade.Camera(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT)
+
 
     def setup(self):
         """ Set up the game and initialize the variables. """
@@ -50,28 +46,16 @@ class MyGame(arcade.Window):
 
         # Set up the player
         self.player_sprite = arcade.Sprite("FinalLabPlayer.png",
-                                           scale=0.5)
+                                           scale=1)
         self.player_sprite.center_x = 20
         self.player_sprite.center_y = 20
         self.player_list.append(self.player_sprite)
-
-        # --- Load our map
-
-        # Read in the tiled map
         map_name = "FinalLab1.tmj"
         self.tile_map = arcade.load_tilemap(map_name, scaling=TILE_SCALING)
-
-        # Set wall and coin SpriteLists
-        # Any other layers here. Array index must be a layer.
         self.wall_list = self.tile_map.sprite_lists["Ground"]
-        # self.coin_list = self.tile_map.sprite_lists["Coins"]
-
-        # --- Other stuff
-        # Set the background color
         if self.tile_map.background_color:
             arcade.set_background_color(self.tile_map.background_color)
 
-        # Keep player from running through the wall_list layer
         self.physics_engine = arcade.PhysicsEnginePlatformer(
             self.player_sprite,
             self.wall_list,
@@ -79,22 +63,12 @@ class MyGame(arcade.Window):
         )
 
     def on_draw(self):
-        """ Render the screen. """
-
-        # Clear the screen to the background color
         self.clear()
-
-        # Select the camera we'll use to draw all our sprites
         self.camera_sprites.use()
-
-        # Draw all the sprites.
         self.wall_list.draw()
         self.player_list.draw()
-
-        # Select the (unscrolled) camera for our GUI
         self.camera_gui.use()
 
-        # Draw the GUI
         arcade.draw_rectangle_filled(self.width // 2,
                                      20,
                                      self.width,
@@ -111,6 +85,8 @@ class MyGame(arcade.Window):
         if key == arcade.key.UP:
             if self.physics_engine.can_jump():
                 self.player_sprite.change_y = JUMP
+                if not self.jump_player or not self.jump_player.playing:
+                    self.jump_player = arcade.play_sound(self.jump)
         elif key == arcade.key.LEFT:
             self.left_pressed = True
         elif key == arcade.key.RIGHT:
@@ -127,14 +103,17 @@ class MyGame(arcade.Window):
     def on_update(self, delta_time):
         """ Movement and game logic """
 
-        # Calculate speed based on the keys pressed
         self.player_sprite.change_x = 0
-        # self.player_sprite.change_y = 0
-
         if self.left_pressed and not self.right_pressed:
             self.player_sprite.change_x = -MOVEMENT_SPEED
+            if not self.walk_player or not self.walk_player.playing:
+                self.walk_player = arcade.play_sound(self.walk)
         elif self.right_pressed and not self.left_pressed:
             self.player_sprite.change_x = MOVEMENT_SPEED
+            if not self.walk_player or not self.walk_player.playing:
+                self.walk_player = arcade.play_sound(self.walk)
+        if not self.score_player or not self.score_player.playing:
+            self.score_player = arcade.play_sound(self.score)
 
         # Call update on all sprites (The sprites don't do much in this
         # example though.)
