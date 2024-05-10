@@ -38,8 +38,6 @@ class MyGame(arcade.Window):
 
 
     def setup(self):
-        """ Set up the game and initialize the variables. """
-
         # Sprite lists
         self.player_list = arcade.SpriteList()
         self.wall_list = arcade.SpriteList()
@@ -55,7 +53,6 @@ class MyGame(arcade.Window):
         self.wall_list = self.tile_map.sprite_lists["Ground"]
         if self.tile_map.background_color:
             arcade.set_background_color(self.tile_map.background_color)
-
         self.physics_engine = arcade.PhysicsEnginePlatformer(
             self.player_sprite,
             self.wall_list,
@@ -68,7 +65,6 @@ class MyGame(arcade.Window):
         self.wall_list.draw()
         self.player_list.draw()
         self.camera_gui.use()
-
         arcade.draw_rectangle_filled(self.width // 2,
                                      20,
                                      self.width,
@@ -77,11 +73,12 @@ class MyGame(arcade.Window):
         text = f"Scroll value: ({self.camera_sprites.position[0]:5.1f}, " \
                f"{self.camera_sprites.position[1]:5.1f})"
         arcade.draw_text(text, 10, 10, arcade.color.BLACK_BEAN, 20)
+        if self.player_sprite.center_y > 1800:
+            arcade.draw_text("GAME OVER!!! Nice Climbing", 250, 300, arcade.color.WHITE, 20)
+        if self.player_sprite.center_x < 0 or self.player_sprite.center_x > 900:
+            arcade.draw_text("Why did you jump off :(", 300, 300, arcade.color.WHITE, 20)
 
     def on_key_press(self, key, modifiers):
-        """
-        Called whenever a key is pressed.
-        """
         if key == arcade.key.UP:
             if self.physics_engine.can_jump():
                 self.player_sprite.change_y = JUMP
@@ -93,16 +90,12 @@ class MyGame(arcade.Window):
             self.right_pressed = True
 
     def on_key_release(self, key, modifiers):
-        """Called when the user releases a key. """
-
         if key == arcade.key.LEFT:
             self.left_pressed = False
         elif key == arcade.key.RIGHT:
             self.right_pressed = False
 
     def on_update(self, delta_time):
-        """ Movement and game logic """
-
         self.player_sprite.change_x = 0
         if self.left_pressed and not self.right_pressed:
             self.player_sprite.change_x = -MOVEMENT_SPEED
@@ -114,41 +107,24 @@ class MyGame(arcade.Window):
                 self.walk_player = arcade.play_sound(self.walk)
         if not self.score_player or not self.score_player.playing:
             self.score_player = arcade.play_sound(self.score)
-
-        # Call update on all sprites (The sprites don't do much in this
-        # example though.)
         self.physics_engine.update()
-
-        # Scroll the screen to the player
         self.scroll_to_player()
 
     def scroll_to_player(self):
-        """
-        Scroll the window to the player.
-
-        if CAMERA_SPEED is 1, the camera will immediately move to the desired position.
-        Anything between 0 and 1 will have the camera move to the location with a
-        smoother pan.
-        """
-
         position = self.player_sprite.center_x - self.width / 2, \
             self.player_sprite.center_y - self.height / 2
         self.camera_sprites.move_to(position, CAMERA_SPEED)
 
     def on_resize(self, width, height):
-        """
-        Resize window
-        Handle the user grabbing the edge and resizing the window.
-        """
         self.camera_sprites.resize(int(width), int(height))
         self.camera_gui.resize(int(width), int(height))
 
 
 def main():
-    """ Main function """
     window = MyGame(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT, SCREEN_TITLE)
     window.setup()
     arcade.run()
+
 
 
 if __name__ == "__main__":
